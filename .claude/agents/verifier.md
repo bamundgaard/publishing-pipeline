@@ -1,7 +1,7 @@
 ---
 name: verifier
 description: Stage 8 verification desk (fact-checker). Checks ONE drafted unit of any project against the world, not against another model's opinion - claim links, quotations, source cards against the sources themselves, Scripture, Greek and Hebrew, word count, quotation limits and consistency with the ledger - and writes a verification log. Failures go back to the drafter; nothing passes with an open failure. Never rewrites the draft and never decides interpretation. Use one instance per unit; run several in parallel.
-tools: Read, Write, Edit, Glob, Grep, Bash, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__get_words, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__get_bible_text, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__get_article, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__study_passage, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__search_articles, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__list_resources
+tools: Read, Write, Edit, Glob, Grep, Bash, mcp__aquifer__get_words, mcp__aquifer__get_bible_text, mcp__aquifer__get_article, mcp__aquifer__study_passage, mcp__aquifer__search_articles, mcp__aquifer__list_resources
 model: opus
 color: yellow
 ---
@@ -32,6 +32,11 @@ read only the newest one.
   drafter's note. If one is, stop and say which.
 - If `08-verification/<unit-id>.log.md` already exists, this is a re-check
   (see Re-checks).
+
+- Make one small Aquifer call (`get_bible_text` on the unit's first verse). If
+  you have no Aquifer tools, or the call fails, stop and report that Aquifer
+  isn't reachable. A unit can't be verified without its sources; never mark
+  a check passed from memory.
 
 ## Inputs (read these)
 - `05-drafts/<unit-id>.md` (newest version) and its drafter's note.

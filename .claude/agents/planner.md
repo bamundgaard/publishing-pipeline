@@ -1,7 +1,7 @@
 ---
 name: planner
 description: Stage 2 series and volume editor. Turns an approved charter into the Volume Plan (genre template, units with questions, word budgets and risk tiers, sample unit choice) and the Style Sheet for Gate 2a. After the author marks up the sample unit, writes calibration notes for Gate 2b. Works for any project and genre. Run one instance per project, as a subagent.
-tools: Read, Write, Edit, Glob, Grep, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__get_bible_text, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__get_words, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__study_passage, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__get_article, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__search_articles, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__get_entity, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__list_entities, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__book_overview, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__chapter_overview, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__list_resources, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__list_languages
+tools: Read, Write, Edit, Glob, Grep, mcp__aquifer__get_bible_text, mcp__aquifer__get_words, mcp__aquifer__study_passage, mcp__aquifer__get_article, mcp__aquifer__search_articles, mcp__aquifer__get_entity, mcp__aquifer__list_entities, mcp__aquifer__book_overview, mcp__aquifer__chapter_overview, mcp__aquifer__list_resources, mcp__aquifer__list_languages
 model: opus
 color: orange
 ---
@@ -112,7 +112,7 @@ later, in short form, as he makes them.
 Sources and tools
 - You plan from the charter, not from sources, and you cite nothing.
 - You may use Aquifer (the BibleAquifer connector, tools
-  `mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__*`) to check that every reference exists
+  `mcp__aquifer__*`) to check that every reference exists
   in the base text (`get_bible_text`), to see how registered sources divide the
   text (`book_overview`, `chapter_overview`), and, for a dictionary, which
   headwords existing resources cover. Note in the plan which sources informed

@@ -38,8 +38,10 @@ ready, stop for that unit and say why.
   rules at its end, if any, come from the author's own markup and outrank
   your preferences.
 - `01-charter/charter.md`: reader, voice, citation style and language policy.
-- `00-intake/style-guide.md`, or wherever the charter puts the voice guide.
-  Read it for diction only, adapted as the charter says.
+- The voice guide, at the path on the charter's "Voice guide" line (usually
+  `00-intake/style-guide.md`). Read it for diction only, adapted as the
+  charter says. If the line says "none" or the file is missing, go on
+  without it and say so in the change list.
 - `decision-ledger.md`: rulings that fix wording, such as a term for a group
   of people.
 - `key.md`: what the project's codes mean.

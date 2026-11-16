@@ -38,6 +38,14 @@ Probe as an editor would:
 - Offer a sensible default when he's unsure, labeled as your suggestion, and
   record whether he accepted it.
 
+Voice guide (question 17): ask where his voice guide or writing samples are.
+If they are outside the project (a skill, a document, pasted text), ask him
+to paste the text or name the file, save a copy as `00-intake/style-guide.md`,
+and give that path on the charter's "Voice guide" line, so every later stage
+and every machine has it. If he has none, write "none" there and list it as
+an open item: drafts will have no voice to match until the sample unit is
+marked up.
+
 Never invent an answer. Unanswered items stay in the charter as OPEN.
 
 ## Output

@@ -19,7 +19,9 @@ Checks:
      "Counted sections: A, B, C" (or the sentence "Count the A, B and C
      sections"). If it names none, every section counts and the report says so.
   2. Claim links resolve: card ids to the newest dossier, ledger ids to
-     decision-ledger.md headings. [BT] and [Charter: ...] are listed.
+     decision-ledger.md headings whose "Ruling:" line is filled in (a link to
+     a question still OPEN or deferred fails). [BT] and [Charter: ...] are
+     listed. If the dossier's source cards can't be read at all, that fails.
   3. Editorial markers left in the text ([OPEN CRUX], [NEEDS SOURCE], ...).
   4. Every quotation in the prose appears verbatim in a card the same
      paragraph links to (or in the base text, for [BT]).
@@ -117,21 +119,46 @@ def count_words(body: str) -> int:
 
 
 def parse_cards(dossier: str) -> dict:
-    """Cards are defined in the dossier's "Source cards" section, one per line,
-    as "SC-Uxx-NN | source | ref | excerpts" (optionally led by "- " or "| ")
-    or "SC-Uxx-NN. Source, ref. excerpts". The whole line is searched for
-    quotations, so either layout works."""
+    """Cards are defined in the dossier's "Source cards" section. The layout
+    in templates/dossier.md is one card per line:
+        - SC-Uxx-NN | source | code, locator | "excerpt"
+    Also read: "SC-Uxx-NN. Source, ref. excerpts", and a card under its own
+    heading ("### SC-Uxx-NN") with "Source:" and "Excerpt:" lines below it.
+    Lines after a card, up to the next card, belong to it, and the whole card
+    is searched for quotations."""
     m = re.search(r"\n## [^\n]*[Ss]ource cards[^\n]*\n(.*?)(?=\n## |\Z)", dossier, re.S)
     section = m.group(1) if m else dossier
-    cards = {}
+    blocks, cur = {}, None
     for line in section.split("\n"):
-        m = re.match(r"^[-|*\s]*(SC-U\d+-\d+)\s*[.|:]\s*(.*)$", line)
-        if not m:
-            continue
-        rest = m.group(2)
-        source = re.split(r"\s*[|,.]\s", rest, maxsplit=1)[0].strip()
-        cards[m.group(1)] = {"source": source, "ref": rest[:200], "excerpt": rest}
+        m = re.match(r"^[-|*#\s]*\**(SC-U\d+-\d+)\**\s*[.|:]?\s*(.*)$", line)
+        if m:
+            cur = m.group(1)
+            blocks[cur] = [m.group(2)] if m.group(2).strip() else []
+        elif cur and line.strip():
+            blocks[cur].append(line.strip())
+    cards = {}
+    for cid, lines in blocks.items():
+        rest = " ".join(lines)
+        src = re.search(r"Source:\**\s*([^|\n]+)", "\n".join(lines))
+        source = (src.group(1) if src and not lines[0].count("|")
+                  else re.split(r"\s*[|,.]\s", rest, maxsplit=1)[0]).strip(" -*")
+        cards[cid] = {"source": source, "ref": rest[:200], "excerpt": rest}
     return cards
+
+
+def ledger_rulings(ledger: str) -> dict:
+    """Ledger id -> the text of its "Ruling:" line ("" if it has none)."""
+    out = {}
+    heads = list(LEDGER_ID.finditer(ledger))
+    for i, h in enumerate(heads):
+        body = ledger[h.end(): heads[i + 1].start() if i + 1 < len(heads) else len(ledger)]
+        r = re.search(r"^\**Ruling:\**\s*(.*)$", body, re.M)
+        out[h.group(1)] = r.group(1).strip() if r else ""
+    return out
+
+
+def unruled(text: str) -> bool:
+    return not text or bool(re.match(r"(OPEN|deferred)\b", text, re.I))
 
 
 def card_codes(card: dict, reg: set, base: set = frozenset()) -> set:
@@ -150,12 +177,15 @@ def base_text(dossier: str) -> str:
 
 
 def register_codes(register: str) -> set:
-    codes, in_reg = set(), True
+    """Codes and names in the "Registered sources" table. Rows under any other
+    heading (proposals for the author, exclusions) never count, whatever the
+    heading is called. A stub register with no "Registered" heading counts
+    every row."""
+    has_heading = bool(re.search(r"^#+ .*registered", register, re.I | re.M))
+    codes, in_reg = set(), not has_heading
     for line in register.split("\n"):
-        if re.match(r"^#+ .*for ben", line, re.I):
-            in_reg = False
-        elif re.match(r"^#+ .*registered", line, re.I):
-            in_reg = True
+        if re.match(r"^#+ ", line):
+            in_reg = bool(re.match(r"^#+ .*registered", line, re.I)) or not has_heading
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if in_reg and len(cells) >= 2 and re.fullmatch(r"[A-Za-z][\w.-]*", cells[1] or ""):
             codes.add(cells[1])
@@ -216,7 +246,8 @@ def main():
     counted = counted_sections(style_p.read_text()) if style_p else None
     cards = parse_cards(dossier)
     bt = base_text(dossier)
-    ledger_ids = set(LEDGER_ID.findall(ledger))
+    rulings = ledger_rulings(ledger)
+    ledger_ids = set(rulings)
     reg_text = reg_p.read_text() if reg_p else ""
     reg = register_codes(reg_text)
     base = base_codes(reg_text)
@@ -224,6 +255,10 @@ def main():
     print(f"# Script checks: {unit}")
     print(f"Draft: {draft_p.relative_to(proj)} · Dossier: {dossier_p.relative_to(proj)}"
           f" · Register: {reg_p.relative_to(proj) if reg_p else 'MISSING'}\n")
+    if not cards:
+        print("**FAIL: no source cards could be read from the dossier.** Cards must be"
+              " in its \"Source cards\" section, laid out as templates/dossier.md shows."
+              " Checks 2, 4 and 5 below can't be trusted until this is fixed.\n")
 
     # 1. word count
     secs = sections(draft)
@@ -260,7 +295,7 @@ def main():
 
     # 2. links resolve
     print("## 2. Claim links")
-    used_cards, used_ledger, charter, bad = set(), set(), set(), []
+    used_cards, used_ledger, charter, bad, open_links = set(), set(), set(), [], []
     for _, toks in links_in(body):
         for t in toks:
             if t.startswith("SC-"):
@@ -277,9 +312,14 @@ def main():
                 used_ledger.add(t)
                 if t not in ledger_ids:
                     bad.append(t)
+                elif unruled(rulings[t]) and t not in open_links:
+                    open_links.append(t)
     print(f"Cards cited: {len(used_cards)} · ledger ids: {', '.join(sorted(used_ledger)) or 'none'}"
           f" · charter links: {', '.join(sorted(charter)) or 'none'}")
     print("Unresolved: " + (", ".join(sorted(set(bad))) + " **FAIL**" if bad else "none **PASS**"))
+    if open_links:
+        print("Linked to a question not yet ruled (Ruling: OPEN, deferred or missing): "
+              + ", ".join(open_links) + " **FAIL**")
     print()
 
     # 3. markers
@@ -338,9 +378,10 @@ def main():
     print("## 5. Cited sources in the corpus register")
     missing = []
     for c in sorted(used_cards):
-        if c in cards:
-            if not card_codes(cards[c], reg, base):
-                missing.append(f"{c} ({cards[c]['ref'][:60]})")
+        if c not in cards:
+            missing.append(f"{c} (card not found in the dossier, so its source can't be checked)")
+        elif not card_codes(cards[c], reg, base):
+            missing.append(f"{c} ({cards[c]['ref'][:60]})")
     print("\n".join(f"- {m}" for m in missing) + " **FAIL**" if missing else "all registered **PASS**")
     print()
 

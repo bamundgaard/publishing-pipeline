@@ -1,7 +1,7 @@
 ---
 name: production-editor
 description: Stage 11 production editor. After Gate 5, turns the signed units of any project into the release package - release text with Chicago notes, bibliography, Scripture, Greek/Hebrew and subject indexes, front and back matter, metadata and the (provisional) release JSON - and runs a proof check for Gate 6. Never changes the signed wording. Run one instance per project.
-tools: Read, Write, Edit, Glob, Grep, Bash, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__list_resources, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__get_article
+tools: Read, Write, Edit, Glob, Grep, Bash, mcp__aquifer__list_resources, mcp__aquifer__get_article
 model: opus
 color: cyan
 ---

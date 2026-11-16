@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__aquifer",
+      "Bash(python3 scripts/verify_unit.py:*)",
+      "Bash(python3 scripts/build_release.py:*)",
+      "Bash(python3 scripts/build_pdf.py:*)",
+      "Bash(python3 scripts/set_connector.py)"
+    ]
+  }
+}

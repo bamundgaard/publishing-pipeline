@@ -61,6 +61,15 @@ BOOK_TABLE = {
     "HEB": ("Heb", "Hebrews"), "JAS": ("Jas", "James"), "1PE": ("1Pet", "1 Peter"),
     "2PE": ("2Pet", "2 Peter"), "1JN": ("1John", "1 John"), "2JN": ("2John", "2 John"),
     "3JN": ("3John", "3 John"), "JUD": ("Jude", "Jude"), "REV": ("Rev", "Revelation"),
+    # Deuterocanonical books
+    "TOB": ("Tob", "Tobit"), "JDT": ("Jdt", "Judith"), "ESG": ("EsthGr", "Greek Esther"),
+    "WIS": ("Wis", "Wisdom"), "SIR": ("Sir", "Sirach"), "BAR": ("Bar", "Baruch"),
+    "LJE": ("EpJer", "Letter of Jeremiah"), "S3Y": ("PrAzar", "Prayer of Azariah"),
+    "SUS": ("Sus", "Susanna"), "BEL": ("Bel", "Bel and the Dragon"),
+    "1MA": ("1Macc", "1 Maccabees"), "2MA": ("2Macc", "2 Maccabees"),
+    "3MA": ("3Macc", "3 Maccabees"), "4MA": ("4Macc", "4 Maccabees"),
+    "1ES": ("1Esd", "1 Esdras"), "2ES": ("2Esd", "2 Esdras"),
+    "MAN": ("PrMan", "Prayer of Manasseh"), "PS2": ("AddPs", "Psalm 151"),
 }
 BOOKS = "|".join(sorted((re.escape(n) for _, n in BOOK_TABLE.values()), key=len, reverse=True))
 NOT_STATED = "not stated in charter"
@@ -108,6 +117,21 @@ def unit_ref(title: str):
     return {"book": book, "chapter": ch, "start": a, "end": end, "end_chapter": end_ch,
             "osis": f"{osis_b}.{ch}.{a}" + (f"-{osis_b}.{end_ch}.{end}"
                                              if (end_ch, end) != (ch, a) else "")}
+
+
+def chapter_of(ref: dict, verse: int):
+    """Chapter a bare verse number ("v. 2") belongs to in this unit. A unit in
+    one chapter has one answer. In a unit that crosses a chapter, a verse at
+    or after the start verse is in the first chapter and one at or before the
+    end verse is in the last; returns None when it could be either (or the
+    unit spans more than two chapters), so the caller can report it."""
+    first, last = ref["chapter"], ref.get("end_chapter", ref["chapter"])
+    if first == last or ref["start"] is None:
+        return first
+    in_first, in_last = verse >= ref["start"], verse <= ref["end"]
+    if last - first == 1 and in_first != in_last:
+        return first if in_first else last
+    return None
 
 
 def note_text(card: dict) -> str:
@@ -162,7 +186,9 @@ def main():
         return charter_field(charter, *labels) or NOT_STATED
 
     work = {
-        "title": charter_field(charter, "Title") or (title_m.group(1).strip() if title_m else NOT_STATED),
+        "title": charter_field(charter, "Title") or (
+            title_m.group(1).strip() if title_m and not title_m.group(1).strip().startswith("<")
+            else NOT_STATED),
         "author": field("Author"),
         "genre": field("Genre"),
         "base_translation": field("Base translation"),
@@ -200,6 +226,7 @@ def main():
         if not ref:
             problems.append(f"{unit}: no USFM reference in the title line; "
                             "verse milestones and v./vv. references skipped")
+        tr_chapter = ref["chapter"] if ref else None
         headings = [h[3:].strip() for h in re.findall(r"^## .+$", text, re.M)]
         see_heads = "|".join(re.escape(h) for h in headings) or "(?!)"
         md.append(f"# {title}\n")
@@ -216,13 +243,31 @@ def main():
                 new, ids = convert(par.strip(), cards, notes, unit)
                 pi = len(sec["paragraphs"])
                 if ref:
-                    # Verse labels such as "**4 ..." or "**vv. 4" at a
-                    # paragraph's start; in a translation, every verse number.
-                    verses = [int(v) for v in re.findall(r"^\*\*(?:vv?\. )?(\d+)\b", new)]
+                    # (chapter, verse) pairs. In a translation, every verse
+                    # number, read in order: when the numbers start again, the
+                    # next chapter has begun. Elsewhere, a verse label at the
+                    # paragraph's start ("**4 ...", "**vv. 4", "**2:1 ...").
+                    marks = []
                     if sec["type"] == "translation":
-                        verses = [int(v) for v in re.findall(r"(?:^|\s)(\d{1,3}) (?=\S)(?!\d)", new)]
-                    for v in verses:
-                        u["verse_milestones"].append({"osis": f"{osis_b}.{ref['chapter']}.{v}",
+                        prev = None
+                        for v in re.findall(r"(?:^|\s)(\d{1,3}) (?=\S)(?!\d)", new):
+                            v = int(v)
+                            if prev is not None and v < prev and tr_chapter < ref.get("end_chapter", tr_chapter):
+                                tr_chapter += 1
+                            prev = v
+                            marks.append((tr_chapter, v))
+                    else:
+                        m = re.match(r"^\*\*(?:vv?\. )?(?:(\d+):)?(\d+)\b", new)
+                        if m:
+                            v = int(m.group(2))
+                            ch = int(m.group(1)) if m.group(1) else chapter_of(ref, v)
+                            if ch is None:
+                                problems.append(f"{unit}: verse label {v} could be in either chapter "
+                                                f"of {ref['osis']}; write it as chapter:verse")
+                                ch = ref["chapter"]
+                            marks.append((ch, v))
+                    for ch, v in marks:
+                        u["verse_milestones"].append({"osis": f"{osis_b}.{ch}.{v}",
                                                       "section": sec["type"],
                                                       "paragraph": pi})
                 for m in re.finditer(rf"({TERM})\s*\(\s*[\"“]([^\"”]+)[\"”]\s*\)", new):
@@ -236,7 +281,12 @@ def main():
                 if ref:
                     for m in re.finditer(r"\bvv?\. \d+(?:[a-z])?(?:\s*[–-]\s*\d+|(?:,\s*(?:and\s+)?\d+)+|\s+and\s+\d+)?", new):
                         verses = re.sub(r"^vv?\.\s*", "", m.group(0))
-                        u["scripture_refs"].append(f"{name_b} {ref['chapter']}:{verses}")
+                        ch = chapter_of(ref, int(re.match(r"\d+", verses).group(0)))
+                        if ch is None:
+                            # crosses a chapter and the verse could be in either
+                            u["scripture_refs"].append(f"{name_b} {m.group(0)} (chapter not stated)")
+                        else:
+                            u["scripture_refs"].append(f"{name_b} {ch}:{verses}")
                 for m in re.finditer(rf"\b(U\d{{2,3}})\b|\b[Ss]ee (?:the )?(?:{see_heads}) on vv?\. \d+", new):
                     u["cross_links"].append(m.group(0))
                 if re.search(r"\[(?:SC-|U\d+-D|S\d|X\d|BT|Charter)", new):

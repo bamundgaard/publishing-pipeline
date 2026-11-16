@@ -1,7 +1,7 @@
 ---
 name: language-reviewer
 description: Stage 7 review panel, language role. Reviews ONE drafted unit of any project for its use of Greek and Hebrew, checking every form, lemma and gloss against Aquifer's word data, and writes an independent review report for Gate 4. Never rewrites the draft and never decides interpretation. Run one instance per unit, in parallel with the other four reviewers.
-tools: Read, Write, Edit, Glob, Grep, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__get_words, mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__get_bible_text
+tools: Read, Write, Edit, Glob, Grep, mcp__aquifer__get_words, mcp__aquifer__get_bible_text
 model: sonnet
 color: red
 ---

@@ -58,5 +58,9 @@ file, for example "Follow .claude/agents/managing-editor.md and continue the
 All other agents run as subagents that the main session starts.
 
 Aquifer is the BibleAquifer connector. Its tools are named
-`mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__<tool>`; list them by name in an
-agent's `tools` line.
+`mcp__aquifer__<tool>`; list them by name in an
+agent's `tools` line. The id in those names differs between accounts and
+machines: `python3 scripts/set_connector.py` shows the one in use, and
+`python3 scripts/set_connector.py <id>` changes it everywhere. An agent that
+needs Aquifer and can't reach it stops and says so; it never works from
+memory instead.

@@ -13,8 +13,7 @@ dataset output, never from recall. The author approves each gate and owns
 every position the book takes.
 
 The rules every agent follows are in [CLAUDE.md](CLAUDE.md). The files
-name the author as Ben, who wrote the pipeline for his own books; change the
-name in `CLAUDE.md` and the agent files to make it yours.
+address the author as Ben, who wrote the pipeline for his own books.
 
 ## The stages
 
@@ -50,20 +49,46 @@ Every other unit waits for Gate 2b.
 
 ## Getting started
 
+### What you need
+- **Claude Code** (the desktop app or the terminal), on a plan with room for
+  long runs. See "What it costs" below.
+- **Access to Aquifer** (BibleAquifer), connected to your Claude account or
+  added to this project. Today every source the pipeline cites comes through
+  it.
+- **Python 3.9 or newer**, run as `python3`.
+- **git**, and a GitHub repository if you want the managing editor's pushes
+  to go anywhere.
+- **Google Chrome** on a Mac, only for the print PDF at stage 11.
+
+Built and tested on macOS. The PDF script looks for Chrome in the Mac
+location and sets fonts for Greek only.
+
 ### One-time setup
-1. **Aquifer.** The research agents get their data from the BibleAquifer
-   connector. If it's a connector on your claude.ai account, Claude Code
-   loads it automatically. Its tools are named
-   `mcp__e614c1c4-0f5e-4355-805f-07621f9022c9__*`, and the agents that use
-   Aquifer list those names in their `tools` line. If yours differs, check
-   `/mcp` in a terminal session and change those lines to match. To add it
-   by hand instead:
+1. **Connect Aquifer.** If BibleAquifer is a connector on your claude.ai
+   account, Claude Code loads it automatically. To add it to the project by
+   hand instead:
 
    ```bash
    claude mcp add --scope project --transport http aquifer <your Aquifer MCP URL>
    ```
 
-2. **Google Chrome**, in `/Applications`, if you want a print PDF at stage 11.
+2. **Match the connector id.** Agents can use only the Aquifer tools their
+   `tools` line names, and each name carries the connector's id
+   (`mcp__<id>__get_words`). The id differs between accounts and machines,
+   so on a new account or computer the agents may have no data tools until
+   it is changed. The managing editor checks this at start-up and tells you;
+   to do it yourself, ask a session to list its Aquifer tool names, then:
+
+   ```bash
+   python3 scripts/set_connector.py <your id>
+   ```
+
+   Start a new session afterwards. An agent that can't reach Aquifer stops
+   and says so.
+
+3. **Permissions.** [.claude/settings.json](.claude/settings.json) lets the
+   agents use the Aquifer tools (all read-only) and run the three scripts
+   without asking each time. Everything else still asks.
 
 ### Start or continue a book
 Run the managing editor as your main session, because it talks with you and
@@ -128,6 +153,15 @@ new agent isn't offered, start a new session so it picks up the file.
 stub plan)". Still have the planner write the style sheet before drafting;
 without it, units drift apart in voice, naming and length.
 
+## What it costs
+The test book, three units and about 3,700 words, took roughly 80 agent runs
+and 26 draft versions, because every unit goes through editing, a five-person
+review, verification and copyediting, with send-backs. Expect 25 to 30 agent
+runs per unit, most of them on the largest model. A 40-unit book is on the
+order of a thousand runs: days of elapsed time, and usage limits will set
+the pace. Your own time goes to the gates; Gate 3 (ruling on every open
+question) and Gate 4 (deciding every reviewer finding) are the heavy ones.
+
 ## How a project is laid out
 
 ```text
@@ -158,7 +192,7 @@ and writes only to its own.
 `corpus-register.v2.md`), and agents read only the newest.
 
 ## Scripts
-Three scripts do the checks that shouldn't depend on a model's judgment. The
+Three of these scripts do the checks that shouldn't depend on a model's judgment. The
 agents run them; you can too.
 
 - [scripts/verify_unit.py](scripts/verify_unit.py) `projects/<slug> <unit>`:
@@ -173,6 +207,9 @@ agents run them; you can too.
   charter's "Book details" block.
 - [scripts/build_pdf.py](scripts/build_pdf.py) `projects/<slug>`: prints the
   release package to a PDF with Chrome. Changes no text.
+- [scripts/set_connector.py](scripts/set_connector.py) `<id>`: points every
+  agent at your Aquifer connector (see setup). With no id, shows the one in
+  use.
 
 ## Templates
 Agents build their files from [templates/](templates/): the
@@ -182,6 +219,7 @@ Agents build their files from [templates/](templates/): the
 [volume plan](templates/volume-plan.md),
 [style sheet](templates/style-sheet.md),
 [corpus register](templates/corpus-register.md),
+[dossier](templates/dossier.md),
 [unit draft](templates/unit-draft.md), [edit memo](templates/edit-memo.md),
 [review report](templates/review-report.md),
 [verification log](templates/verification-log.md) and
@@ -191,9 +229,9 @@ quick tests.
 ## Git and GitHub
 The git history is the book's provenance trail: it shows what every file
 said when each gate was approved. The managing editor commits and pushes to
-your GitHub repository at each gate. Keep a repository that holds your
-books private unless their sources' licences allow redistribution. To see
-the history, run
+your GitHub repository at each gate, once you have approved that (it asks
+the first time). Keep a repository that holds your books private unless
+their sources' licences allow redistribution. To see the history, run
 `git log --oneline` in this folder, or open the commits list on GitHub.
 
 ## Status
