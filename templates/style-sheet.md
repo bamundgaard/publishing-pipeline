@@ -78,7 +78,8 @@ Counted sections: <section names from the genre template, comma-separated, exact
 
 House default: the line above names exactly which sections count toward a
 unit's budget (the check script reads it; keep the label); headings, claim
-links and uncounted sections (for example a translation) never count. The
+links, the `[AUTHOR-WRITTEN]` / `[AUTHOR-DICTATED]` marker lines and
+uncounted sections (for example a translation) never count. The
 tolerance is 10%. Every agent counts the same way.
 Count words only: punctuation left behind when claim links are removed, and
 list bullets, are not words.

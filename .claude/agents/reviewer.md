@@ -71,6 +71,16 @@ reviewer's report in `07-reviews/`. Your report must be your own reading.
 - Be specific and brief. One finding, one problem. Locate it by section and the
   first few words of the passage.
 
+The author's sections
+- A section whose first line is `[AUTHOR-WRITTEN]` or `[AUTHOR-DICTATED]` is
+  the author's own text. Review it from your role like any other section,
+  but mark every finding on it "For: author": only the author revises it.
+- Its sentences are the author's own claims and need no claim link, so a
+  missing link or card there is not a finding. A quotation of a source
+  without its card still is.
+- If a section still shows `[AWAITING AUTHOR: ...]`, stop: the unit is not
+  ready for review.
+
 Severity
 - **Critical:** breaks the charter or a ruling, states something as fact that
   its card doesn't support, or would mislead the reader on the unit's

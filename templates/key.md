@@ -25,6 +25,11 @@ dossier (`04-dossiers/`). SC-U03-12 means card 12 in the dossier for U03.
 Drafts put card codes in brackets after the sentences they support.
 
 Other brackets in drafts:
+- [AUTHOR-WRITTEN], [AUTHOR-DICTATED]: on the line under a section heading;
+  you wrote or dictated that section (from your file in `05-drafts/author/`).
+  Sentences in it are your own claims and need no source.
+- [AWAITING AUTHOR: <section>]: a section the charter gives to you that you
+  haven't written yet.
 - [BT]: a quotation of the base translation.
 - A ledger code such as [U03-D2] or [S13]: the sentence rests on Ben's ruling.
 

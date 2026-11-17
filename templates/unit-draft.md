@@ -17,9 +17,18 @@ Prose. Each factual sentence ends with its claim link. [SC-U02-04]
 The author's own position links to the ruling. [U02-D1]
 A base-text quotation copied from the dossier takes [BT].
 
-## <Section 2>
+## <Section 2: one the dial gives to the author, still waiting>
 
-[HUMAN-WRITTEN: <section name>]
+[AWAITING AUTHOR: <section name>]
+
+## <Section 2, once the author's file exists>
+
+[AUTHOR-WRITTEN]
+
+The author's text, word for word. Sentences here are the author's own claims
+and need no link. A quotation of a source still needs its card. [SC-U02-11]
+
+(A dictated section starts with [AUTHOR-DICTATED] and is lightly edited.)
 
 ## <Section 3>
 
@@ -37,8 +46,20 @@ A base-text quotation copied from the dossier takes [BT].
 ## Unsupported claims
 ## Deviations from the plan
 ## Conflicts
-## Human sections
+## Author's sections
 ## Quotation use
 ## Missing inputs
 ## Response to revision requests (revisions only)
+```
+
+## The author's files: 05-drafts/author/<unit-id>.<section>.md
+
+The author writes these; the drafter merges them. `<section>` is the section's
+name in lower case with hyphens (`U02.explanation.md`).
+
+```markdown
+Mode: written        (or: dictated)
+
+Plain prose. No codes are needed. To cite a source, put its card code in
+brackets after the sentence.
 ```

@@ -25,6 +25,11 @@ Checks:
   3. Editorial markers left in the text ([OPEN CRUX], [NEEDS SOURCE], ...).
   4. Every quotation in the prose appears verbatim in a card the same
      paragraph links to (or in the base text, for [BT]).
+  8. The author's own sections (a line "[AUTHOR-WRITTEN]" or
+     "[AUTHOR-DICTATED]" under the section heading): their length and how
+     many sentences carry no link, as notes. Sentences there are the
+     author's own claims and need no link, so check 7 skips them; links and
+     quotations the author did use are still checked in 2 and 4.
   Checks 2 to 6 read every section of the unit; check 7 reads only the
   counted sections, where every factual sentence needs a link.
   5. Every cited card's source is in the corpus register.
@@ -53,6 +58,18 @@ def newest(folder: Path, stem: str, suffix: str = ".md") -> Path | None:
             if n >= best_n:
                 best, best_n = p, n
     return best
+
+
+AUTHOR_MARK = re.compile(r"^[ \t]*\[AUTHOR-(WRITTEN|DICTATED)\][ \t]*$", re.M)
+WAITING = r"\[(?:AWAITING AUTHOR|HUMAN-WRITTEN|HUMAN-DICTATED)[^\]]*\]"
+
+
+def author_mode(body: str):
+    """"written" or "dictated" if the section's first line is the author's
+    marker, else None."""
+    first = next((l for l in body.split("\n") if l.strip()), "")
+    m = AUTHOR_MARK.match(first)
+    return m.group(1).lower() if m else None
 
 
 def counted_sections(style: str) -> list[str] | None:
@@ -113,7 +130,7 @@ def sections(draft: str) -> dict:
 
 
 def count_words(body: str) -> int:
-    body = strip_links(body)
+    body = AUTHOR_MARK.sub("", strip_links(body))
     lines = [l for l in body.split("\n") if not l.lstrip().startswith("#")]
     return len([w for w in " ".join(lines).split() if re.search(r"\w", w)])
 
@@ -284,6 +301,8 @@ def main():
     if budget:
         lo, hi = round(budget * 0.9), round(budget * 1.1)
         verdict = "PASS" if lo <= total <= hi else "FAIL"
+        if verdict == "FAIL" and any(author_mode(b) for b in secs.values()):
+            verdict = "OUTSIDE THE RANGE: a note for the author, not a defect (the unit has an author's section)"
         print(f"Budget {budget} (allowed {lo}–{hi}): **{verdict}**")
     hdr = re.search(r"Words:\s*([^·\n]*)", draft)
     if hdr:
@@ -291,7 +310,8 @@ def main():
     print()
 
     body = "\n".join(secs.values())  # checks 2-6: every section
-    counted_body = "\n".join(b for h, b in secs.items() if is_counted(h))  # check 7
+    counted_body = "\n".join(b for h, b in secs.items()
+                             if is_counted(h) and not author_mode(b))  # check 7
 
     # 2. links resolve
     print("## 2. Claim links")
@@ -324,15 +344,25 @@ def main():
 
     # 3. markers
     print("## 3. Editorial markers")
-    marks = re.findall(r"\[(?:OPEN CRUX|NEEDS SOURCE|CONFLICT|HUMAN-WRITTEN)[^\]]*\]", draft)
-    print("\n".join(f"- {m}" for m in marks) + " **FAIL**" if marks else "none **PASS**")
+    marks = re.findall(r"\[(?:OPEN CRUX|NEEDS SOURCE|CONFLICT)[^\]]*\]", draft)
+    waiting = re.findall(WAITING, draft)
+    for m in marks:
+        print(f"- {m}")
+    for m in waiting:
+        print(f"- {m}: waiting for the author's text (05-drafts/author/); not a drafter defect")
+    print("**FAIL**" if marks or waiting else "none **PASS**")
     print()
 
     # 4. quotations
     print("## 4. Quotations against linked cards")
     fails, ok, quoted_by_src = [], 0, {}
     headings = {norm(h.lstrip("#").strip()) for h in draft.split("\n") if h.lstrip().startswith("#")}
+    author_pars = {par.strip() for h, b in secs.items() if author_mode(b)
+                   for par in re.split(r"\n\s*\n", b)}
     for par in re.split(r"\n\s*\n", body):
+        par = AUTHOR_MARK.sub("", par)
+        own = " (author's section: a quotation of a source needs its card)" \
+            if par.strip() in {AUTHOR_MARK.sub("", a).strip() for a in author_pars} else ""
         par_cards = set()
         par_has_bt = any("BT" in toks for _, toks in links_in(par))
         for _, toks in links_in(par):
@@ -365,10 +395,10 @@ def main():
             short = q if len(q) < 90 else q[:87] + "..."
             if elsewhere:
                 fails.append(f'- "{short}": not in this paragraph\'s cards '
-                             f'({", ".join(sorted(par_cards)) or "none"}); found in {", ".join(elsewhere)}')
+                             f'({", ".join(sorted(par_cards)) or "none"}); found in {", ".join(elsewhere)}{own}')
             else:
                 fails.append(f'- "{short}": not found in any card or the base text '
-                             f'(paragraph cites {", ".join(sorted(par_cards)) or "no card"})')
+                             f'(paragraph cites {", ".join(sorted(par_cards)) or "no card"}){own}')
     print(f"{ok} quotations matched.")
     print("\n".join(fails) + "\n**FAIL** (or a gloss/term in quotation marks: the agent judges)"
           if fails else "**PASS**")
@@ -403,6 +433,21 @@ def main():
                 print(f"- {sent[:140]}")
     if not n:
         print("none")
+    print()
+
+    # 8. the author's own sections
+    print("## 8. The author's sections (notes for the author, not defects)")
+    own_secs = {h: author_mode(b) for h, b in secs.items() if author_mode(b)}
+    if not own_secs:
+        print("none")
+    for h, mode in own_secs.items():
+        text = AUTHOR_MARK.sub("", secs[h])
+        unlinked = [sent for par in re.split(r"\n\s*\n", text) if not par.lstrip().startswith("#")
+                    for sent in re.split(r"(?<=[.!?])\s+(?=[A-Z“\"])", par.strip())
+                    if len(sent.split()) >= 6 and not any(True for _ in links_in(sent))]
+        print(f"- {h}: {mode} by the author · {count_words(secs[h])} words"
+              f"{'' if is_counted(h) else ' (not counted toward the budget)'}"
+              f" · {len(unlinked)} sentences stand as the author's own claims (no link)")
 
 
 if __name__ == "__main__":

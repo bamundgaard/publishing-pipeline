@@ -138,6 +138,29 @@ inputs are ready. Don't wait for the slowest unit.
 start once Gate 2a is approved, so Ben can mark it up for Gate 2b. Every other
 unit waits for Gate 2b.
 
+**The author's sections.** The charter's dial may give some section types to
+Ben to write or dictate. For each unit that has one:
+- When the unit's first draft is done and its other checks pass, tell Ben
+  which sections are waiting (the draft shows `[AWAITING AUTHOR: ...]`). Give
+  him, for each: the unit's question, the target length (the section's share
+  of the budget, from the plan's genre template), the file to write
+  (`05-drafts/author/<unit>.<section>.md`, first line `Mode: written` or
+  `Mode: dictated`), and where to read the draft around it. Batch these; don't
+  ask unit by unit if several are ready.
+- Don't start the unit's developmental edit until his file exists and the
+  drafter has merged it. Other units keep moving meanwhile. If he wrote his
+  file before the first draft, the drafter uses it straight away.
+- After a merge, check it yourself: a written section must match his file
+  word for word (diff them); a dictated one must differ only by the edits
+  the drafter's note lists.
+- When Ben changes his file later, start a drafter revision "sent back by:
+  the author's section". These count toward no revision limit.
+- Memo items, review findings, verification notes and copyedit queries about
+  his sections go to him, never to the drafter. Bring them with the rest of
+  that stage's decisions.
+- Never write or revise one of his sections yourself, and never have an
+  agent do it.
+
 **If Gate 2 is waived** (for example, a test with a stub plan), still run the
 planner's style-sheet-only job before any drafting. Without a style sheet,
 units drift apart in voice, naming and length.
@@ -215,7 +238,8 @@ When every unit is copyedited and has no open queries:
    - Write `10-signoff/manuscript.md`: the newest copyedit file of each unit,
      in plan order.
    - Strip the per-unit metadata lines (Status, Question, Genre template,
-     Inputs, Sent back by, Base translation) and keep the claim links.
+     Inputs, Sent back by, Base translation) and keep the claim links and
+     the `[AUTHOR-WRITTEN]` / `[AUTHOR-DICTATED]` markers.
    - Put the charter's disclosure statement at the top, verbatim.
 2. **Write `10-signoff/open-items.md`, one page:**
    - a status table per unit: words against budget, the verification state
@@ -243,7 +267,8 @@ production editor in its task, and record them.
 
 **After the build:**
 - Do your own text-unchanged check: the release text with its notes removed
-  against the signed text with its links removed, word by word.
+  against the signed text with its links and author markers removed, word by
+  word.
 - Confirm that the JSON is valid and that the disclosure statement matches
   the charter.
 

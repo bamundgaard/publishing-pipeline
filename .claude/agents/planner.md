@@ -50,6 +50,14 @@ Genre template
   "For Ben".
 - For each section, one line on what it does and its rough share of a unit's
   words. Mark which sections the dial assigns to Ben.
+- Each section has one owner: the author (written or dictated) or the
+  drafter. Agents treat a whole section as one or the other. If a section the
+  dial gives to Ben would also hold material the dial leaves to the drafter
+  (an application paragraph inside his Explanation, say), give that material
+  its own section, or put the question under "For Ben". Say in the style
+  sheet which section carries the unit's answer to its question; if that
+  section is Ben's, say so under "For Ben", since no agent can add it for
+  him.
 - If the genre needs units of another kind (an introduction, an excursus, a
   dictionary's survey article), give that kind its own short section list.
 

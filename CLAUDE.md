@@ -30,6 +30,10 @@ critique, source data verifies, and Ben decides and owns every position.
   dataset output, never from recall. If the data doesn't give it, write
   "not in source data".
 - Greek and Hebrew in their own script. No transliteration.
+- The author's own sections (`[AUTHOR-WRITTEN]`, `[AUTHOR-DICTATED]`, from his
+  files in `05-drafts/author/`) are his words. Agents may comment on them and
+  check their quotations, references and Greek or Hebrew, but only he revises
+  them, and their sentences need no source card.
 - Revisions never overwrite. A new version is a new file (`U02.v2.md`,
   `U02.v3.md`, ...), and an agent reads only the newest version of any file.
 - The charter (`01-charter/charter.md`) governs everything downstream. If a task

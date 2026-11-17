@@ -64,7 +64,9 @@ else. The script checks:
 - that every quotation appears in a card its paragraph links to;
 - that every cited source is registered;
 - the words quoted per source;
-- sentences with no claim link.
+- sentences with no claim link;
+- the author's own sections, with their length and unlinked sentences (notes,
+  not defects; see check 8).
 
 Then judge what the script flagged:
 - **Quotation not in the linked cards.** Look at the passage.
@@ -78,7 +80,9 @@ Then judge what the script flagged:
 - **Unlinked sentence.** A transition, a signpost or the unit's own structure
   is a PASS. A sentence stating a fact about the text, a source or the world
   is a FAIL.
-- **Word count outside the range.** FAIL.
+- **Word count outside the range.** FAIL, unless the unit has an author's
+  section (the script says so): then it is a note for the author, who decides
+  whether to cut, add or change the budget (see check 8).
 - **Header count differs from the script's count** (the count itself in
   range): not a defect. Record the script's figure under "For the copy
   editor"; the copy editor sets the header from the script. (Drafters count by
@@ -116,7 +120,8 @@ Read every sentence that carries a card link against that card's excerpt.
   view attributed to the wrong source, or to "the sources" or "most sources"
   when the cards show only one, is a FAIL.
 - **Ledger links:** a sentence linked to a ledger id must state what that
-  ruling says, at the weight it gives. It must not take a view on a question
+  ruling says (including its "My argument" line, if it has one), at the
+  weight it gives, and nothing beyond them. It must not take a view on a question
   the ruling leaves as a survey. A mismatch is a FAIL.
 - **Charter links** (`[Charter: <clause>]`): the sentence must state what that
   clause says.
@@ -160,17 +165,54 @@ belongs to the librarian, so this is not a failure of the unit.
   ruling on how to name a group of people applies in the commentary's own
   prose. Quotations stay verbatim.
 
-### 8. Handed-on items
+### 8. The author's sections
+A section whose first line is `[AUTHOR-WRITTEN]` or `[AUTHOR-DICTATED]` is the
+author's own. Its sentences are the author's claims, the same standing a
+ruling has, so they need no claim link, and check 3 does not apply to
+unlinked sentences there. The script lists these sections. Check them like
+this:
+- **Still checked, and a FAIL if wrong** (each can be checked against data):
+  - a quotation of Scripture against the base text (check 4);
+  - every verse reference (check 4);
+  - every Greek or Hebrew form, lemma and gloss (check 5);
+  - a quotation of a source: it needs a link to a card that contains it,
+    word for word. Quoted words are the source's, not the author's;
+  - any claim link the author did use: the sentence must say what the card
+    or ruling says (check 3).
+- Record each of those FAILs under the check it belongs to (3, 4 or 5), with
+  "author's section" in the note. The row for check 8 says how many sections
+  there are, whether each matches the author's file, and how many notes you
+  raised. A Greek or Hebrew word in the author's section needs no card link;
+  check its form and gloss against the data.
+- **Reported as notes, never as defects:** a factual claim you can't find in
+  the dossier, a sentence that seems to differ from a ruling or the charter,
+  an attribution to a named person with no card, the word count if the unit
+  is outside its range, and anything else in the section the author would
+  want to know (something the plan or style sheet expects of the section
+  that isn't there, voice, a source's short name). List each under "For the
+  author" with where it is and what you found. These do not block the
+  verdict.
+- **Word for word:** compare a written section with the author's file in
+  `05-drafts/author/`. Any difference is a FAIL for the drafter. For a
+  dictated section, every difference must be listed in the drafter's note;
+  an unlisted one is a FAIL for the drafter.
+- A FAIL inside an author's section is fixed by the author, not the drafter
+  (except a merge that changed the author's words). Mark it "Fix by: author".
+- `[AWAITING AUTHOR: ...]` left in the unit: the unit can't be verified yet.
+  Verdict "Needs the author".
+
+### 9. Handed-on items
 Give each item from a "Passed to verification" section a result, PASS or FAIL
 with evidence, and say which file and item it came from.
 
 ## Severity
-- **Critical:** a quotation that isn't in its source; a claim its card
+- **Critical:** a quotation that isn't in its source, or a quotation of a
+  source with no card at all; a claim its card
   contradicts; a Greek or Hebrew fact the data contradicts; a sentence that
   contradicts a ruling or the charter. The unit cannot pass.
 - **Major:** an unsupported strengthening or generalization; a wrong link; a
-  wrong attribution; a missing link on a factual sentence; a word count
-  outside the range.
+  wrong attribution; a missing link on a factual sentence; a verse reference
+  that doesn't exist; a word count outside the range.
 - **Minor:** a trimmed quotation whose meaning still
   holds but needs an ellipsis; a reference format slip.
 
@@ -183,8 +225,13 @@ version (`<unit-id>.log.v2.md`) and never overwrite.
 - Re-run the script.
 - Re-check every defect from the earlier log and mark it fixed, not fixed, or
   broken by the revision.
-- Then run checks 2–7 again on every sentence the revision changed. Find
+- Then run checks 2–8 again on every sentence the revision changed. Find
   those by comparing the draft versions.
+
+A re-check after the author's section was merged or changed is labelled
+"re-check (author's section)". It counts toward no limit, and there may be
+no earlier defects to re-check: run checks 2–8 on the author's section and on
+any sentence elsewhere that points to something the merge removed.
 
 Verification may send a unit back to the drafter at most twice. If defects
 remain after the second re-check, the verdict is "Needs the author".
@@ -206,8 +253,9 @@ Verdicts:
 - **Verified:** every check passes. The unit goes to copyedit.
 - **Defects → stage 5:** every open defect is one the drafter can fix from
   the dossier and ledger.
-- **Needs the author:** a dossier defect, a ruling problem, a check that
-  couldn't be run, or the loop limit reached.
+- **Needs the author:** a dossier defect, a ruling problem, a defect in one
+  of the author's own sections, a section still awaiting the author, a check
+  that couldn't be run, or the loop limit reached.
 
 Do not edit the draft, the dossier, the ledger, the plan or `gates.md`.
 

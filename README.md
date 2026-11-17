@@ -42,6 +42,15 @@ gate. It writes no content and decides no position.
 to drafting. Each source can send a unit back at most twice; after that the
 unit goes to the author.
 
+**Sections you write yourself.** The charter's dial marks each kind of
+section as written by you, dictated by you, or drafted for you to revise.
+For the first two, the managing editor asks you for the section once the
+unit's first draft exists. You write plain prose in
+`05-drafts/author/<unit>.<section>.md`; it goes into the unit word for word
+(lightly edited if dictated). Your sentences there are your own claims and
+need no source; quotations, verse references and Greek or Hebrew are still
+checked. Reviewers may comment on your sections, but only you revise them.
+
 **The sample unit.** One unit, chosen by the planner, runs ahead of the rest:
 its dossier and draft are made once Gate 2a is approved, the author marks it
 up, and the planner turns the markup into calibration rules for Gate 2b.
@@ -119,7 +128,7 @@ file.
 | 1 | `01-charter/charter.md` | Edits to the charter, then the gate |
 | 2a | `02-plan/volume-plan.md` and `style-sheet.md` | Answers under "For Ben" in the plan, then the gate |
 | 2b | The sample unit's draft | Your marked-up copy as `02-plan/sample-unit.md` (edit the text; comments in `[Ben: ...]`); check the calibration notes, then the gate |
-| 3 | The dossiers' position maps, tier A first | Your rulings in `decision-ledger.md`, replacing each `Ruling: OPEN`, then the gate |
+| 3 | The dossiers' position maps, tier A first | Your rulings in `decision-ledger.md`, replacing each `Ruling: OPEN` (and, where you have one, your own reasoning under "My argument"), then the gate |
 | 4 | Each unit's `07-reviews/<unit>.panel.md` | In the Decision column: "accept → stage 5", "accept → stage 6" or "reject", then the gate |
 | 5 | `10-signoff/manuscript.md` and `open-items.md` | "reject" against any copyedit change you don't want, then the gate |
 | 6 | The package in `11-release/` | The gate |
@@ -176,7 +185,7 @@ projects/<slug>/
 ├── 02-plan/                    # plan, style sheet, sample markup → Gates 2a, 2b
 ├── 03-corpus/                  # corpus register: the only citable sources
 ├── 04-dossiers/                # one dossier per unit → Gate 3
-├── 05-drafts/                  # drafts with claim links, drafter's notes, dictation/
+├── 05-drafts/                  # drafts with claim links, drafter's notes, author/ (your own sections)
 ├── 06-dev-edit/                # edit memos, volume memo
 ├── 07-reviews/                 # five reports per unit, the panel file → Gate 4
 ├── 08-verification/            # verification logs
@@ -248,8 +257,8 @@ their sources' licences allow redistribution. To see the history, run
     parsing, so tense, voice, mood and case are "not in source data".
   - License terms and quotation limits are not yet checked.
   - Gates 3 and 4 cover the whole book, not one unit at a time.
-  - Sections the author writes himself leave a placeholder that no stage
-    yet fills.
+  - Sections the author writes or dictates have a path, but it has not yet
+    been used on a real book.
 
 ## Licence
 MIT. See [LICENSE](LICENSE).

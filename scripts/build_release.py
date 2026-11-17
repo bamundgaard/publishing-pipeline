@@ -10,6 +10,8 @@ Gate 5). For each unit it:
   - converts card links to numbered notes (Chicago short form: source, ref),
   - drops ledger links, charter links and [BT] (the author's own positions and
     the base text need no note; the front matter names the base text),
+  - drops the [AUTHOR-WRITTEN] / [AUTHOR-DICTATED] marker under a section the
+    author wrote, and records who wrote each section in the data,
   - collects verse milestones, Greek and Hebrew terms with their glosses,
     Scripture references and cross-references.
 Book details (title, author, base translation, license, disclosure ...) come
@@ -29,7 +31,7 @@ from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from verify_unit import links_in, newest, parse_cards  # noqa: E402
+from verify_unit import AUTHOR_MARK, author_mode, links_in, newest, parse_cards  # noqa: E402
 
 SCHEMA = "pipeline-release/0.2-provisional"
 GREEK_CH = "\u0370-\u03FF\u1F00-\u1FFF\u0300-\u036F"
@@ -232,8 +234,11 @@ def main():
         md.append(f"# {title}\n")
         for part in re.split(r"\n(?=## )", text)[1:]:
             head, _, body = part.partition("\n")
+            mode = author_mode(body)
             sec = {"type": head[3:].strip().lower(), "heading": head[3:].strip(),
+                   "written_by": f"author ({mode})" if mode else "drafted, author-revised",
                    "paragraphs": []}
+            body = AUTHOR_MARK.sub("", body)
             md.append(head + "\n")
             for par in [p for p in re.split(r"\n\s*\n", body) if p.strip()]:
                 if par.lstrip().startswith("#"):
@@ -289,7 +294,7 @@ def main():
                             u["scripture_refs"].append(f"{name_b} {ch}:{verses}")
                 for m in re.finditer(rf"\b(U\d{{2,3}})\b|\b[Ss]ee (?:the )?(?:{see_heads}) on vv?\. \d+", new):
                     u["cross_links"].append(m.group(0))
-                if re.search(r"\[(?:SC-|U\d+-D|S\d|X\d|BT|Charter)", new):
+                if re.search(r"\[(?:SC-|U\d+-D|S\d|X\d|BT|Charter|AUTHOR-|AWAITING AUTHOR|HUMAN-)", new):
                     problems.append(f"{unit}: claim link left in text: {new[:80]}")
                 sec["paragraphs"].append({"text": new, "notes": ids})
                 md.append(new + "\n")

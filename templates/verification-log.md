@@ -21,7 +21,8 @@ Defects: <n> critical · <n> major · <n> minor
 | 5. Greek and Hebrew | PASS / FAIL | |
 | 6. Quotation limits | PASS / limit not set | |
 | 7. Consistency with ledger, charter, cross-references | PASS / FAIL | |
-| 8. Handed-on items | PASS / FAIL | <n> items |
+| 8. The author's sections | PASS / FAIL / none | <n> sections · <n> notes for the author |
+| 9. Handed-on items | PASS / FAIL | <n> items |
 
 ## Defects
 VF1. Severity: critical / major / minor · Check: <n> · Where: <section, "first few words..."> · Failed: <what> · Evidence: <draft text> / <card excerpt, source text or tool output> · Fix by: drafter / author

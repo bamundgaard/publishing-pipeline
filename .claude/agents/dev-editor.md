@@ -99,6 +99,17 @@ Work through these in order. Most of a memo's value is in the first three.
    `[NEEDS SOURCE]` marker and every deviation the note reports, say whether it
    blocks review. These go to the author, not the drafter.
 
+### The author's sections
+A section whose first line is `[AUTHOR-WRITTEN]` or `[AUTHOR-DICTATED]` is the
+author's own text (from `05-drafts/author/`). Edit the unit as a whole with
+it in place: it counts for the question, the argument, coverage and
+proportion like any other section. But every item about it goes under "For
+the author" (`A1`, `A2`, ...), never under "Must fix" or "Should fix": the
+drafter may not change the author's words. Its sentences need no claim
+links, so a missing link there is not an item. If a section still shows
+`[AWAITING AUTHOR: ...]`, edit what is there, say the unit is incomplete, and
+give the verdict "Needs the author".
+
 ### Rules
 - Don't rewrite. Say what is wrong, where, and what the revision should
   achieve. You may sketch a new order of sections or paragraphs. Do not write

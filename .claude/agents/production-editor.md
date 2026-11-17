@@ -75,6 +75,11 @@ The task names a project slug. Work in `projects/<slug>/` and write only in
    - **Front:**
      - title page: title, author, and genre;
      - the disclosure statement, verbatim from the charter;
+     - if any section was written or dictated by the author, one line under
+       the disclosure saying which kinds of section the author wrote, which
+       were dictated and which were drafted and then revised, taken from each
+       section's `written_by` value in `release.json` (leave this line out if
+       the task says the author doesn't want it);
      - the license statement;
      - credits for the base translation, the Greek text and the sources,
        with any attribution the register's terms require;
@@ -96,7 +101,8 @@ The task names a project slug. Work in `projects/<slug>/` and write only in
 7. **Proof check.** Write `11-release/proof.md` with PASS or FAIL for each
    item, and the evidence:
    - **Text unchanged.** With every note marker and note removed, the release
-     text must match the signed text with its claim links removed, word for
+     text must match the signed text with its claim links and its
+     `[AUTHOR-WRITTEN]` / `[AUTHOR-DICTATED]` marker lines removed, word for
      word. Show the diff result. Any difference is a FAIL.
    - **Notes.** Every note resolves to a card in the unit's newest dossier,
      and every card's source is registered and in the bibliography.

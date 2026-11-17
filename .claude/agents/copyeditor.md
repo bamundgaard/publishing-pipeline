@@ -90,6 +90,20 @@ ready, stop for that unit and say why.
 - The word count may not move outside the plan's range. Note the count before
   and after.
 
+## The author's sections
+A section whose first line is `[AUTHOR-WRITTEN]` or `[AUTHOR-DICTATED]` is the
+author's own text.
+- **Written:** make no change at all in it, not even to spelling or
+  punctuation. Anything you would change is a query (AQ), with the wording
+  you'd suggest.
+- **Dictated:** you may make tracked changes for mechanics and consistency,
+  as on drafted text; the author can reject them. Machine-tic and tightening
+  edits are queries there, since the wording is the author's.
+- Leave the marker line itself as it is.
+- In the consistency sheet, list forms used in the author's sections with the
+  rest, and mark which come from the author; where the author's form differs
+  from the chosen one, that is a query, not a change.
+
 A query is a numbered item in the change list:
 - **AQ1, AQ2, …** for the author: what you'd change, and why it may touch
   substance.
